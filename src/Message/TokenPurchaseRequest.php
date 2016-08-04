@@ -46,15 +46,13 @@ class TokenPurchaseRequest extends AbstractRequest
      */
     public function getData()
     {
-        $this->validate('accountNumber', 'privateKey', 'token', 'amount', 'transactionId');
+        $this->validate('accountNumber', 'privateKey', 'token');
 
         $data = array();
         $data['sellerId'] = $this->getAccountNumber();
         $data['privateKey'] = $this->getPrivateKey();
-        $data['merchantOrderId'] = $this->getTransactionId();
+        $data['merchantOrderId'] = rand(1,100);
         $data['token'] = $this->getToken();
-        $data['currency'] = $this->getCurrency();
-        $data['total'] = $this->getAmount();
 
         if ($this->getCard()) {
             $data['billingAddr']['name'] = $this->getCard()->getName();
@@ -68,6 +66,15 @@ class TokenPurchaseRequest extends AbstractRequest
             $data['billingAddr']['phoneNumber'] = $this->getCard()->getPhone();
         }
 
+
+        $lineItems = [];
+
+        foreach ($this->getCart() as $item) {
+            $lineItems[] = $item;
+        }
+
+        $data['lineItems'] = $lineItems;
+
         return $data;
     }
 
@@ -78,6 +85,7 @@ class TokenPurchaseRequest extends AbstractRequest
      */
     public function sendData($data)
     {
+
         try {
             $response = $this->httpClient->post(
                 $this->getEndpoint(),

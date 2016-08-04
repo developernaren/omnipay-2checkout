@@ -67,6 +67,13 @@ class TokenGateway extends AbstractGateway
         return $this->setParameter('privateKey', $value);
     }
 
+
+    public function setCart($value)
+    {
+        return $this->setParameter('cart', $value);
+    }
+
+
     /**
      * @return Message\PurchaseRequest
      */
